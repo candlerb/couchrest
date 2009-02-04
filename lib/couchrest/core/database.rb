@@ -73,7 +73,8 @@ module CouchRest
       end
     end
     
-    # GET a document from CouchDB, by id. Returns a Ruby Hash.
+    # GET a document from CouchDB, by id. Returns a Document or Design
+    # object, which wraps a Ruby hash.
     def get(id)
       slug = escape_docid(id)
       hash = CouchRest.get("#{@uri}/#{slug}")

@@ -6,7 +6,7 @@ rescue
   raise
 end
 require 'digest/md5'
-require File.dirname(__FILE__) + '/document'
+require 'couchrest/core/document'
 require 'mime/types'
 
 # = CouchRest::Model - Document modeling, the CouchDB way
