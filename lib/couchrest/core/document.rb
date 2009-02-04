@@ -1,3 +1,5 @@
+require 'couchrest/mixins/views'
+
 module CouchRest
   class Response < Hash
     def initialize(keys = {})
