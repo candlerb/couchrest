@@ -1,17 +1,44 @@
 require 'couchrest/mixins/views'
-
 module CouchRest
-  class Response < Hash
+  class Response
     def initialize(keys = {})
+      @hash = {}
       keys.each do |k,v|
-        self[k.to_s] = v
+        @hash[k.to_s] = v
       end
     end
+
     def []= key, value
-      super(key.to_s, value)
+      @hash[key.to_s] = value
     end
+
     def [] key
-      super(key.to_s)
+      @hash[key.to_s]
+    end
+
+    def to_hash
+      @hash
+    end
+
+    def to_json(*args)
+      @hash.to_json(*args)
+    end
+
+    def ==(other)
+      @hash == other.to_hash
+    end
+
+    alias :orig_respond_to? :respond_to?
+    def respond_to?(m)
+      orig_respond_to?(m) || @hash.respond_to?(m)
+    end
+
+    def method_missing(m, *args, &block)
+      if @hash.respond_to?(m)
+        @hash.__send__(m, *args, &block)
+      else
+        super(m, *args, &block)
+      end
     end
   end
   
