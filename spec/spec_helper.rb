@@ -10,7 +10,7 @@ unless defined?(FIXTURE_PATH)
 
   COUCHHOST = "http://127.0.0.1:5984"
   TESTDB    = 'couchrest-test'
-  TEST_SERVER    = CouchRest.new
+  TEST_SERVER    = CouchRest.new(COUCHHOST, 10)
   TEST_SERVER.default_database = TESTDB
 end
 

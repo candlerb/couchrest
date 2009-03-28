@@ -134,6 +134,7 @@ describe "ExtendedDocument views" do
     it "should query all" do
       rs = Unattached.all :database=>@db
       rs.length.should == 4
+      rs[0].database.should == @db
     end
     it "should barf on query if no database given" do
       lambda{Unattached.view :by_title}.should raise_error
@@ -146,6 +147,7 @@ describe "ExtendedDocument views" do
     it "should merge query params" do
       rs = Unattached.by_title :database=>@db, :startkey=>"bbb", :endkey=>"eee"
       rs.length.should == 3
+      rs[0].database.should == @db
     end
     it "should query via view" do
       view = Unattached.view :by_title, :database=>@db
@@ -158,6 +160,7 @@ describe "ExtendedDocument views" do
         things << thing
       end
       things[0]["doc"]["title"].should =='aaa'
+      #things[0].database.should == @db
     end
     it "should yield with by_key method" do
       things = []
@@ -165,6 +168,7 @@ describe "ExtendedDocument views" do
         things << thing
       end
       things[0]["doc"]["title"].should =='aaa'
+      #things[0].database.should == @db
     end
     it "should barf on get if no database given" do
       lambda{Unattached.get("aaa")}.should raise_error
@@ -172,6 +176,7 @@ describe "ExtendedDocument views" do
     it "should get from specific database" do
       u = Unattached.get(@first_id, @db)
       u.title.should == "aaa"
+      u.database.should == @db
     end
     it "should barf on first if no database given" do
       lambda{Unattached.first}.should raise_error
@@ -179,6 +184,7 @@ describe "ExtendedDocument views" do
     it "should get first" do
       u = Unattached.first :database=>@db
       u.title.should =~ /\A...\z/
+      u.database.should == @db
     end
     it "should barf on all_design_doc_versions if no database given" do
       lambda{Unattached.all_design_doc_versions}.should raise_error
@@ -197,7 +203,8 @@ describe "ExtendedDocument views" do
   describe "class proxy" do
     before(:all) do
       reset_test_db!
-      @us = Unattached.on(TEST_SERVER.default_database)
+      @db = TEST_SERVER.default_database
+      @us = Unattached.on(@db)
       %w{aaa bbb ddd eee}.each do |title|
         u = @us.new(:title => title)
         u.save
@@ -207,6 +214,7 @@ describe "ExtendedDocument views" do
     it "should query all" do
       rs = @us.all
       rs.length.should == 4
+      rs[0].database.should == @db
     end
     it "should make the design doc upon first query" do
       @us.by_title
@@ -216,6 +224,7 @@ describe "ExtendedDocument views" do
     it "should merge query params" do
       rs = @us.by_title :startkey=>"bbb", :endkey=>"eee"
       rs.length.should == 3
+      rs[0].database.should == @db
     end
     it "should query via view" do
       view = @us.view :by_title
@@ -228,6 +237,7 @@ describe "ExtendedDocument views" do
         things << thing
       end
       things[0]["doc"]["title"].should =='aaa'
+      #things[0].database.should == @db
     end
     it "should yield with by_key method" do
       things = []
@@ -235,14 +245,17 @@ describe "ExtendedDocument views" do
         things << thing
       end
       things[0]["doc"]["title"].should =='aaa'
+      #things[0].database.should == @db
     end
     it "should get from specific database" do
       u = @us.get(@first_id)
       u.title.should == "aaa"
+      u.database.should == @db
     end
     it "should get first" do
       u = @us.first
       u.title.should =~ /\A...\z/
+      u.database.should == @db
     end
     it "should clean up design docs left around on specific database" do
       @us.by_title
