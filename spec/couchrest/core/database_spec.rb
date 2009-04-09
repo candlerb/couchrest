@@ -14,6 +14,12 @@ describe CouchRest::Database do
       db.name.should == "foo/bar"
       db.uri.should == "#{COUCHHOST}/foo%2Fbar"
     end
+
+    it "should create such a database" do
+      db = @cr.database("#{TESTDB}/sub")
+      lambda { db.recreate! }.should_not raise_error
+      db.delete!
+    end
   end
 
   describe "map query with _temp_view in Javascript" do

@@ -66,7 +66,7 @@ module CouchRest
 
     # Create a database
     def create_db(name)
-      CouchRest.put "#{@uri}/#{name}"
+      CouchRest.put "#{@uri}/#{name.gsub('/','%2F')}"
       database(name)
     end
 
